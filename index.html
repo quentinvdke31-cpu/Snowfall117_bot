@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>SNOWFALL 11.7 — Mini App</title>
+<style>
+:root{--bg:#090909;--panel:#151515;--gold:#d7ad58;--red:#8e1b22;--muted:#aaa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#402020 0,#151010 35%,#080808 75%);color:#f4eee4;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+header{padding:22px 18px 15px;text-align:center;border-bottom:1px solid #493126;background:#080808d9;position:sticky;top:0;z-index:5}
+.brand{font-family:Georgia,serif;font-size:30px;letter-spacing:5px;color:var(--gold);text-shadow:0 0 18px #9b451f}
+.sub{font-size:10px;letter-spacing:4px;color:#c7b9a0;margin-top:5px}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+button{cursor:pointer;border:1px solid #6d4b2a;background:#211817;color:#f7ead2;padding:10px 14px;border-radius:4px;font-weight:700}
+button.active,button.primary{background:linear-gradient(135deg,#9d2427,#501114);border-color:#bd8c49}
+main{max-width:920px;margin:auto;padding:22px 16px 90px}
+.hero{padding:30px 20px;margin:4px 0 22px;text-align:center;border:1px solid #68432b;background:linear-gradient(120deg,#130e0e,#241313 55%,#100d0b);box-shadow:0 12px 35px #0008}
+.hero h1{font:normal 27px Georgia,serif;letter-spacing:3px;color:var(--gold);margin:0 0 10px}
+.hero p{color:#d1c5b3;line-height:1.6;margin:0 auto;max-width:560px;font-size:14px}
+.notice{font-size:12px;color:#c5b9a8;border-left:3px solid var(--gold);padding:10px 12px;background:#171411;margin:16px 0}
+h2{font:normal 22px Georgia,serif;color:var(--gold);letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:linear-gradient(145deg,#1a1715,#100f0e);border:1px solid #453326;padding:16px;border-radius:5px}
+.thumb{height:112px;background:linear-gradient(135deg,#33211c,#171313 60%,#6b3b25);display:grid;place-items:center;font:28px Georgia;color:#d4ad65;letter-spacing:3px;margin-bottom:13px}
+.card h3{margin:4px 0 8px;color:#f1dfc3}.card p{color:#bdb3a5;font-size:13px;line-height:1.5;min-height:40px}
+.tag{font-size:10px;letter-spacing:2px;color:#d8ae60;text-transform:uppercase}
+.price{font-weight:bold;color:#e2bf7b;margin:10px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cartline{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #403027}
+.small{font-size:12px;color:var(--muted)}
+.hidden{display:none!important}
+footer{text-align:center;color:#887d70;font-size:11px;padding:24px}
+#gate{position:fixed;inset:0;background:#050505f2;z-index:20;display:grid;place-items:center;padding:20px}
+.gatebox{max-width:400px;text-align:center;padding:28px;background:#17110f;border:1px solid #a27642}
+.gatebox h1{color:var(--gold);font:26px Georgia}.gatebox p{color:#d0c4b2;line-height:1.5;font-size:14px}
+input{accent-color:#a72b2e}
+@media(max-width:480px){.brand{font-size:25px}main{padding:16px 12px 70px}.hero{padding:24px 15px}}
+</style>
+</head>
+<body>
+<div id="gate">
+ <div class="gatebox">
+  <h1>SNOWFALL 11.7</h1>
+  <p>Cette vitrine est réservée aux adultes. Confirmez avoir l’âge légal requis dans votre pays pour consulter des informations sur les produits CBD.</p>
+  <label class="small"><input id="adult" type="checkbox"> Je confirme être majeur(e).</label><br><br>
+  <button class="primary" onclick="enter()">Entrer</button>
+  <p class="small">Si vous êtes mineur(e), quittez cette page.</p>
+ </div>
+</div>
+<header>
+ <div class="brand">SNOWFALL 11.7</div><div class="sub">LOS ANGELES • 1980s • CBD</div>
+ <nav>
+  <button class="active" data-tab="home" onclick="tab('home',this)">Accueil</button>
+  <button data-tab="catalogue" onclick="tab('catalogue',this)">Catalogue</button>
+  <button data-tab="cart" onclick="tab('cart',this)">Panier <span id="count">0</span></button>
+  <button data-tab="info" onclick="tab('info',this)">Infos</button>
+ </nav>
+</header>
+<main>
+<section id="home">
+ <div class="hero"><h1>THE WEST COAST EDITION</h1><p>Une vitrine CBD au style cinématographique inspiré du Los Angeles des années 80. Découvrez les fiches produits et leurs informations.</p></div>
+ <div class="notice">Vitrine de démonstration : les produits, descriptions et prix ci-dessous sont fictifs. Vérifiez la législation locale et les obligations applicables avant toute commercialisation.</div>
+ <h2>À découvrir</h2><div id="featured" class="grid"></div>
+</section>
+<section id="catalogue" class="hidden"><h2>Catalogue</h2><p class="small">Sélection de démonstration — informations à compléter après vérification de conformité.</p><div id="products" class="grid"></div></section>
+<section id="cart" class="hidden"><h2>Votre sélection</h2><div id="cartitems"></div><div class="row" style="margin-top:18px"><strong>Total indicatif</strong><strong id="total" style="color:var(--gold)">0,00 €</strong></div><p class="small">Aucun paiement n’est effectué dans cette maquette. Les demandes commerciales doivent respecter les règles applicables aux produits CBD, à la publicité et à la vente à distance.</p><button class="primary" onclick="sendRequest()">Préparer une demande</button><p id="requestmsg" class="small"></p></section>
+<section id="info" class="hidden"><h2>Informations & conformité</h2><div class="card"><p>Cette mini-app est une maquette d’interface. Avant mise en ligne, renseignez l’identité du vendeur, les mentions légales, les conditions de vente, la politique de confidentialité, les règles de livraison et les informations réglementaires vérifiées pour chaque produit.</p><p>Ne proposez aucun produit interdit ou non conforme. En France, vérifiez notamment les règles en vigueur concernant le THC, les ingrédients, l’étiquetage, la publicité et la vente aux mineurs.</p><p class="small">Contact : à configurer par l’administrateur.</p></div></section>
+</main>
+<footer>SNOWFALL 11.7 • Maquette de démonstration • 18+</footer>
+<script>
+const products=[
+ {id:1,name:"West Coast — Fleur CBD",kind:"Fleur CBD",desc:"Fiche de démonstration. Ajouter variété, origine, analyses et taux vérifiés.",price:0},
+ {id:2,name:"Golden State — Résine CBD",kind:"Résine CBD",desc:"Fiche de démonstration. Ajouter composition et certificat d’analyse.",price:0},
+ {id:3,name:"Sunset — Infusion",kind:"Infusion",desc:"Fiche de démonstration. Ajouter ingrédients et précautions d’emploi.",price:0}
+];
+let cart={};
+function card(p){return `<article class="card"><div class="thumb">S•11.7</div><div class="tag">${p.kind}</div><h3>${p.name}</h3><p>${p.desc}</p><div class="price">Prix à confirmer</div><button onclick="add(${p.id})">Ajouter à ma sélection</button></article>`}
+document.getElementById('products').innerHTML=products.map(card).join('');
+document.getElementById('featured').innerHTML=products.slice(0,2).map(card).join('');
+function enter(){if(!document.getElementById('adult').checked){alert("Veuillez confirmer votre majorité.");return}document.getElementById('gate').classList.add('hidden')}
+function tab(id,btn){['home','catalogue','cart','info'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='cart')renderCart()}
+function add(id){cart[id]=(cart[id]||0)+1;document.getElementById('count').textContent=Object.values(cart).reduce((a,b)=>a+b,0)}
+function renderCart(){let el=document.getElementById('cartitems');let ids=Object.keys(cart);el.innerHTML=ids.length?ids.map(id=>{let p=products.find(x=>x.id==id);return `<div class="cartline"><span>${p.name}<br><span class="small">Quantité : ${cart[id]}</span></span><button onclick="removeItem(${id})">Retirer</button></div>`}).join(''):'<p class="small">Votre sélection est vide.</p>';document.getElementById('total').textContent='À confirmer';}
+function removeItem(id){delete cart[id];document.getElementById('count').textContent=Object.values(cart).reduce((a,b)=>a+b,0);renderCart()}
+function sendRequest(){document.getElementById('requestmsg').textContent='Maquette locale : connectez un bot Telegram et un backend sécurisé pour transmettre une demande. Aucun message ni paiement n’est envoyé depuis cette démo.'}
+</script>
+</body></html>
